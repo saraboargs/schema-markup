@@ -8,7 +8,7 @@ st.set_page_config(
     page_title="Schema Markup Generator 🛠️",  # Nome dell'app
     page_icon="🛠️",  # Emoji o icona
     layout="centered",  # Layout centrato
-    initial_sidebar_state="expanded"  # Sidebar espansa di default
+    initial_sidebar_state="expanded",  # Sidebar espansa di default
     description="Uno strumento facile e veloce per generare e ottimizzare il markup strutturato delle pagine del suo sito partendo da una URL ottimizzata di un competitor."
 )
 
