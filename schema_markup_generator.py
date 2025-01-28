@@ -3,6 +3,15 @@ import requests
 from bs4 import BeautifulSoup
 import json
 
+st.set_page_config(
+    page_title="Schema Markup Generator 🛠️",  # Nome dell'app che apparirà nella scheda del browser
+    page_icon="🛠️",  # Emoji o icona che apparirà nella scheda del browser
+    layout="centered",  # Può essere 'centered' o 'wide'
+    initial_sidebar_state="expanded",  # Sidebar espansa di default
+    description="Uno strumento facile e veloce per generare e ottimizzare il markup strutturato schema.org per una pagina del proprio sito web partendo dalla URL di un competitor."
+)
+
+
 def estrai_schema_markup(url):
     """Estrai il markup strutturato schema.org da una pagina web."""
     try:
