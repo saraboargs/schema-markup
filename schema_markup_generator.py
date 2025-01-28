@@ -1,0 +1,63 @@
+import streamlit as st
+import requests
+from bs4 import BeautifulSoup
+import json
+
+def estrai_schema_markup(url):
+    """Estrai il markup strutturato schema.org da una pagina web."""
+    try:
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
+        soup = BeautifulSoup(response.text, 'html.parser')
+
+        # Cerca il markup JSON-LD
+        json_ld = soup.find_all('script', {'type': 'application/ld+json'})
+
+        # Ritorna i blocchi di JSON trovati
+        schema_data = [json.loads(script.string) for script in json_ld if script.string]
+        return schema_data
+    except Exception as e:
+        st.error(f"Errore nell'estrazione del markup da {url}: {e}")
+        return []
+
+def genera_schema_ottimizzato(schema_cliente, schema_competitor):
+    """Genera il markup schema ottimizzato unendo le informazioni del cliente con quelle del competitor."""
+    try:
+        # Combina i dati del cliente con quelli del competitor (logica personalizzabile)
+        schema_ottimizzato = schema_cliente.copy() if schema_cliente else {}
+
+        for item in schema_competitor:
+            if isinstance(item, dict):
+                for key, value in item.items():
+                    if key not in schema_ottimizzato:
+                        schema_ottimizzato[key] = value
+
+        return schema_ottimizzato
+    except Exception as e:
+        st.error(f"Errore nella generazione del markup ottimizzato: {e}")
+        return {}
+
+# App Streamlit
+st.title("Tool per ottimizzare lo Schema Markup")
+
+# Inserimento URL da parte dell'utente
+url_cliente = st.text_input("Inserisci l'URL del sito da ottimizzare:")
+url_competitor = st.text_input("Inserisci l'URL della pagina del competitor:")
+
+if st.button("Genera Schema Markup Ottimizzato"):
+    if url_cliente and url_competitor:
+        # Estrazione schema markup
+        schema_cliente = estrai_schema_markup(url_cliente)
+        schema_competitor = estrai_schema_markup(url_competitor)
+
+        if schema_competitor:
+            st.success("Schema markup estratto dal competitor con successo!")
+            schema_ottimizzato = genera_schema_ottimizzato(schema_cliente[0] if schema_cliente else {}, schema_competitor)
+
+            # Risultato finale in JSON
+            st.subheader("Markup strutturato ottimizzato:")
+            st.json(schema_ottimizzato)
+        else:
+            st.error("Non è stato possibile estrarre il markup dal competitor.")
+    else:
+        st.error("Inserisci entrambi gli URL per procedere.")
