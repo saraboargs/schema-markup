@@ -12,9 +12,15 @@ def estrai_schema_markup(url):
 
         # Cerca il markup JSON-LD
         json_ld = soup.find_all('script', {'type': 'application/ld+json'})
-
-        # Ritorna i blocchi di JSON trovati
-        schema_data = [json.loads(script.string) for script in json_ld if script.string]
+        
+        schema_data = []
+        for script in json_ld:
+            if script.string:
+                try:
+                    # Tenta di caricare il JSON ignorando caratteri non validi
+                    schema_data.append(json.loads(script.string))
+                except json.JSONDecodeError as e:
+                    st.warning(f"JSON malformato trovato e ignorato: {e}")
         return schema_data
     except Exception as e:
         st.error(f"Errore nell'estrazione del markup da {url}: {e}")
